@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Input Example</title>
+</head>
+<body>
+
+	<form>
+		<label for="userInput">Enter your input:</label><br>
+		<input type="text" id="userInput" name="userInput"><br>
+		<button type="button" onclick="processInput()">Submit</button>
+	</form>
+
+	<script>
+  function processInput() {
+    var userInput = document.getElementById("userInput").value;
+
+    // Send the user input to the GPT API for processing
+    fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer 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 '
+      },
+      body: JSON.stringify({
+        'prompt': userInput,
+        'max_tokens': 128,
+        'temperature': 0.5
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      // Display the response from the GPT API on the web page
+      var responseText = data.choices[0].text;
+      var responseElement = document.getElementById("response");
+      responseElement.innerHTML = responseText;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  }
+</script>
+
+<p>Response: <span id="response"></span></p>
+
+
+</body>
+</html>
