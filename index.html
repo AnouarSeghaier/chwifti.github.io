@@ -31,7 +31,7 @@
     .then(response => response.json())
     .then(data => {
       // Display the response from the GPT API on the web page
-      var responseText = data.choices[0].text;
+      var responseText = data.choices[0].message;
       var responseElement = document.getElementById("response");
       responseElement.innerHTML = responseText;
     })
