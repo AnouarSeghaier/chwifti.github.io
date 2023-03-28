@@ -1,48 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>User Input Example</title>
+	<title>GPT-3.5 Text Completion Example</title>
 </head>
 <body>
 
 	<form>
 		<label for="userInput">Enter your input:</label><br>
 		<input type="text" id="userInput" name="userInput"><br>
-		<button type="button" onclick="processInput()">Submit</button>
+		<button type="button" onclick="generateResponse()">Submit</button>
 	</form>
 
+	<p>Response: <span id="response"></span></p>
+
 	<script>
-  function processInput() {
-    var userInput = document.getElementById("userInput").value;
+		function generateText(promptText) {
+			// Send the user input to the GPT API for processing
+			fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer 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 '
+				},
+				body: JSON.stringify({
+					'prompt': promptText,
+					'max_tokens': 128,
+					'temperature': 0.5
+				})
+			})
+			.then(response => response.json())
+			.then(data => {
+				// Check that the choices array is not empty and has a defined first element
+				if (data.choices && data.choices[0]) {
+					// Display the response from the GPT API on the web page
+					var responseText = data.choices[0].text;
+					var responseElement = document.getElementById("response");
+					responseElement.innerHTML = responseText;
+				} else {
+					console.error('Error: Empty or undefined choices array');
+				}
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+		}
 
-    // Send the user input to the GPT API for processing
-    fetch('https://api.openai.com/v1/engines/davinci-codex/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer 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 '
-      },
-      body: JSON.stringify({
-        'prompt': userInput,
-        'max_tokens': 128,
-        'temperature': 0.5
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Display the response from the GPT API on the web page
-      var responseText = data.choices[0].message;
-      var responseElement = document.getElementById("response");
-      responseElement.innerHTML = responseText;
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }
-</script>
-
-<p>Response: <span id="response"></span></p>
-
+		function generateResponse() {
+			var userInput = document.getElementById("userInput").value;
+			generateText(userInput);
+		}
+	</script>
 
 </body>
 </html>
